@@ -18,14 +18,14 @@
           <el-form-item>
             <el-button style="width: 350px" type="primary" @click="login">登录</el-button>
           </el-form-item>
-          <el-button @click="textAxios">测试</el-button>
         </el-form>
       </el-card>
     </div>
   </div>
 </template>
 <script>
-import request from '@/utils/request'
+
+import Message from 'element-ui/packages/message'
 
 export default {
   name: 'Login',
@@ -53,13 +53,16 @@ export default {
       }
     }
   },
+  created() {
+    Message(process.env.NODE_ENV)
+  },
   methods: {
     login() {
       this.$refs.form.validate((isOk) => {
         if (isOk) {
           this.$store.dispatch('user/login', ['loginForm'])
           this.$message({
-            message: '恭喜你，登录成功',
+            message: '登录成功',
             type: 'success'
           })
         }
