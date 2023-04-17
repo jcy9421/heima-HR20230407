@@ -54,6 +54,7 @@ export default {
     login() {
       this.$refs.form.validate((isOk) => {
         if (isOk) {
+          this.$store.dispatch('user/login', ['loginForm'])
           this.$message({
             message: '恭喜你，登录成功',
             type: 'success'
