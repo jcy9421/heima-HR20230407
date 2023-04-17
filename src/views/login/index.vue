@@ -18,12 +18,15 @@
           <el-form-item>
             <el-button style="width: 350px" type="primary" @click="login">登录</el-button>
           </el-form-item>
+          <el-button @click="textAxios">测试</el-button>
         </el-form>
       </el-card>
     </div>
   </div>
 </template>
 <script>
+import request from '@/utils/request'
+
 export default {
   name: 'Login',
   data() {
