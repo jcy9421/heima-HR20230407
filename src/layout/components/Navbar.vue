@@ -7,8 +7,10 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+          <img v-if="avatar" :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <span v-else class="user-name-avatar">{{ name?.charAt(0) }}</span>
+          <p class="user-name">{{ name }}</p>
+          <i class="el-icon-s-tools" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
@@ -44,7 +46,8 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'name'
     ])
   },
   methods: {
@@ -65,7 +68,7 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 
   .hamburger-container {
     line-height: 46px;
@@ -73,7 +76,7 @@ export default {
     float: left;
     cursor: pointer;
     transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
       background: rgba(0, 0, 0, .025)
@@ -115,22 +118,45 @@ export default {
       margin-right: 30px;
 
       .avatar-wrapper {
-        margin-top: 5px;
         position: relative;
+        display: flex;
+        align-items: center;
 
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          //margin-top: 10px;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
         }
 
-        .el-icon-caret-bottom {
+        .user-name-avatar {
+          cursor: pointer;
+          width: 60px;
+          height: 30px;
+          text-align: center;
+          line-height: 30px;
+          font-size: 12px;
+          color: #fff;
+          border-radius: 100%;
+          background-color: rgba(79, 144, 218, 0.99);
+        }
+
+        .user-name {
+          cursor: pointer;
+          margin-right: 30px;
+          margin-left: 4px;
+          font-weight: 700;
+          width: 100%;
+          line-height: normal;
+        }
+
+        .el-icon-s-tools {
           cursor: pointer;
           position: absolute;
           right: -20px;
-          top: 25px;
-          font-size: 12px;
+          top: 12px;
+          font-size: 24px;
         }
       }
     }

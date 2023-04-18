@@ -23,9 +23,14 @@ const actions = {
     const token = await login(data)
     context.commit('setToken', token)
   },
-  async getUserInfo(context, data) {
+  async getUserInfo(context) {
     const result = await getUserInfo()
     context.commit('setUserInfo', result)
+  },
+  loginOut(context) {
+    context.commit('removeToken')
+    // 设置用户信息为空对象
+    context.commit('setUserInfo', {})
   }
 }
 export default {
