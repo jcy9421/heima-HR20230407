@@ -5,13 +5,16 @@ import store from '@/store'
 
 // 前置守卫
 const whiteList = ['/login', '/404']
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   nprogress.start()
   if (store.getters.token) {
     if (to.path === '/login') {
       next('/')
       nprogress.done()
     } else {
+      if (!store.getters.userId) {
+        await store.dispatch('user/getUserInfo')
+      }
       next()
     }
   } else {
