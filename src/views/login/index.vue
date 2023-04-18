@@ -32,9 +32,9 @@ export default {
   data() {
     return {
       loginForm: {
-        mobile: '',
-        password: '',
-        isAgree: false
+        mobile: process.env.NODE_ENV === 'development' ? '13800000002' : '',
+        password: process.env.NODE_ENV === 'development' ? '123456' : '',
+        isAgree: process.env.NODE_ENV === 'development'
       },
       loginRules: {
         mobile: [
@@ -53,14 +53,12 @@ export default {
       }
     }
   },
-  created() {
-    Message(process.env.NODE_ENV)
-  },
   methods: {
     login() {
-      this.$refs.form.validate((isOk) => {
+      this.$refs.form.validate(async(isOk) => {
         if (isOk) {
-          this.$store.dispatch('user/login', ['loginForm'])
+          await this.$store.dispatch('user/login', this.loginForm)
+          this.$router.push('/')
           this.$message({
             message: '登录成功',
             type: 'success'
