@@ -1,9 +1,7 @@
 <template>
   <div class="navbar">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-
     <breadcrumb class="breadcrumb-container" />
-
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
@@ -21,7 +19,7 @@
           <a target="_blank" href="https://github.com/jcy9421/heima-HR20230407">
             <el-dropdown-item>项目地址</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
+          <a target="_blank" @click.prevent="updatePassword">
             <el-dropdown-item>修改密码</el-dropdown-item>
           </a>
           <el-dropdown-item @click.native="logout">
@@ -30,6 +28,28 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <el-dialog
+      title="修改密码"
+      :visible.sync="showDialog"
+      width="500px"
+      @close="btnCancel"
+    >
+      <el-form ref="passwordForm" :model="passwordForm" :rules="passwordRules" label-width="100px">
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input v-model="passwordForm.oldPassword" placeholder="请输入当前密码" show-password />
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input v-model="passwordForm.newPassword" placeholder="请输入新密码" show-password />
+        </el-form-item>
+        <el-form-item label="重复密码" prop="confirmPassword">
+          <el-input v-model="passwordForm.confirmPassword" placeholder="请输再次密码" show-password />
+        </el-form-item>
+        <el-form-item>
+          <el-button size="mini" type="primary" @click="btnOk">确认修改</el-button>
+          <el-button size="mini" @click="btnCancel">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -37,12 +57,39 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { updatePassword } from '@/api/user'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      showDialog: false,
+      passwordForm: {
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      },
+      passwordRules: {
+        oldPassword: [{ required: true, message: '旧密码不能为空', trigger: 'blur' }],
+        newPassword: [{ required: true, message: '新密码不能为空', trigger: 'blur' },
+          { min: 6, max: 16, message: '密码长度6-16位之间', trigger: 'blur' }],
+        confirmPassword: [{ required: true, message: '重复密码不能为空', trigger: 'blur' }, {
+          trigger: 'blur',
+          validator: (rule, value, callback) => {
+            if (this.passwordForm.newPassword === value) {
+              callback()
+            } else {
+              callback(new Error('重复密码与新密码不一致'))
+            }
+          }
+        }]
+      }
+    }
+  },
+
   computed: {
     ...mapGetters([
       'sidebar',
@@ -51,6 +98,22 @@ export default {
     ])
   },
   methods: {
+    btnOk() {
+      this.$refs.passwordForm.validate(async isOK => {
+        if (isOK) {
+          await updatePassword(this.passwordForm)
+          this.$message.success('修改密码成功')
+          this.btnCancel()
+        }
+      })
+    },
+    btnCancel() {
+      this.$refs.passwordForm.resetFields() // 重置表单
+      this.showDialog = false
+    },
+    updatePassword() {
+      this.showDialog = true
+    },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
