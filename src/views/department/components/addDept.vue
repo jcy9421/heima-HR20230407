@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { addDepartment, getDepartmentList, getSimpleList } from '@/api/department'
+import { addDepartment, getDepartmentDetail, getDepartmentList, getSimpleList } from '@/api/department'
 
 export default {
   name: 'AddDept',
@@ -119,8 +119,14 @@ export default {
           await addDepartment({ ...this.depFrom, pid: this.currentNodeId })
           this.$emit('updateDepartment')
           this.$message.success('新增成功')
+          this.close()
         }
       })
+    },
+    async getDepartmentDetail(id) {
+      id = this.currentNodeId
+      const result = await getDepartmentDetail(id)
+      this.depFrom = result
     }
   }
 }
