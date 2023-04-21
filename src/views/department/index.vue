@@ -23,7 +23,7 @@
 
       </el-tree>
     </div>
-    <addDept :current-node-id="currentNodeId" :show-dialog.sync="showDialog" />
+    <addDept :current-node-id="currentNodeId" :show-dialog.sync="showDialog" @updateDepartment="getDepartment" />
   </div>
 </template>
 <script>
@@ -68,6 +68,8 @@ export default {
         this.showDialog = true
         this.currentNodeId = id
       }
+    },
+    getDepartment() {
     }
   }
 }
