@@ -6,3 +6,9 @@ export function getDepartmentList() {
     method: 'get'
   })
 }
+
+export function getSimpleList() {
+  return request({
+    url: '/sys/user/simple'
+  })
+}

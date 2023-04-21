@@ -7,14 +7,14 @@
             <el-col>{{ data.name }}</el-col>
             <el-col :span="4">
               <span>{{ data.managerName }}</span>
-              <el-dropdown>
+              <el-dropdown @command="operateDept">
                 <span class="el-dropdown-link tree-manager">
                   操作<i class="el-icon-arrow-down el-icon--right" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>添加子部门</el-dropdown-item>
-                  <el-dropdown-item>编辑部门</el-dropdown-item>
-                  <el-dropdown-item>删除</el-dropdown-item>
+                  <el-dropdown-item command="add">添加子部门</el-dropdown-item>
+                  <el-dropdown-item command="edit">编辑部门</el-dropdown-item>
+                  <el-dropdown-item command="del">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
@@ -23,16 +23,22 @@
 
       </el-tree>
     </div>
+    <addDept :show-dialog.sync="showDialog" />
   </div>
 </template>
 <script>
 import { getDepartmentList } from '@/api/department'
 import { transListToTreeData } from '@/utils'
+import addDept from '@/views/department/components/addDept.vue'
 
 export default {
   name: 'Department',
+  components: {
+    addDept
+  },
   data() {
     return {
+      showDialog: false,
       depts: [{
         name: '',
         managerName: '',
@@ -54,6 +60,11 @@ export default {
     async getDepartmentList() {
       const result = await getDepartmentList()
       this.depts = transListToTreeData(result, 0)
+    },
+    operateDept(type) {
+      if (type === 'add') {
+        this.showDialog = true
+      }
     }
   }
 }
