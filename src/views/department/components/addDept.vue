@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="showDialog" title="新增部门" :hide-on-click="false" @close="close">
+  <el-dialog :visible="showDialog" title="新增部门" @close="close">
     <el-form ref="depFrom" :model="depFrom" :rules="depRules">
       <el-form-item prop="name" label="部门名称">
         <el-input v-model="depFrom.name" style="width: 90%" />
