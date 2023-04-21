@@ -8,8 +8,13 @@
         <el-input v-model="depFrom.code" style="width: 90%" />
       </el-form-item>
       <el-form-item prop="code" label="部门负责人">
-        <el-select v-model="depFrom.managerId" style="width: 90%">
-          <el-option v-for="item in managerList" :key="item.id" :value="item.username" />
+        <el-select v-model="depFrom.managerId" style="width: 90%" placeholder="请选择负责人">
+          <el-option
+            v-for="item in managerList"
+            :key="item.id"
+            :label="item.username"
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item prop="code" label="部门介绍">
@@ -38,10 +43,15 @@ export default {
     showDialog: {
       type: Boolean,
       default: false
+    },
+    currentNodeId: {
+      type: Number,
+      default: null
     }
   },
   data() {
     return {
+
       managerList: [],
       depFrom: {
         name: '',
