@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="showDialog" title="新增部门" :hide-on-click="false" @close="close">
+  <el-dialog :visible="showDialog" title="新增部门" @close="close">
     <el-form ref="depFrom" :model="depFrom" :rules="depRules">
       <el-form-item prop="name" label="部门名称">
         <el-input v-model="depFrom.name" style="width: 90%" />
@@ -24,8 +24,8 @@
       <el-form-item>
         <el-row type="flex" justify="center">
           <el-col :span="12">
-            <el-button type="primary">确定</el-button>
-            <el-button>取消</el-button>
+            <el-button type="primary" @click="btnOk">确定</el-button>
+            <el-button @click="close">取消</el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { getDepartmentList, getSimpleList } from '@/api/department'
+import { addDepartment, getDepartmentDetail, getDepartmentList, getSimpleList } from '@/api/department'
 
 export default {
   name: 'AddDept',
@@ -51,7 +51,6 @@ export default {
   },
   data() {
     return {
-
       managerList: [],
       depFrom: {
         name: '',
@@ -107,11 +106,27 @@ export default {
   },
   methods: {
     close() {
+      this.$refs.depFrom.resetFields()
       this.$emit('update:showDialog', false)
     },
     async getSimpleList() {
       const result = await getSimpleList()
       this.managerList = result
+    },
+    btnOk() {
+      this.$refs.depFrom.validate(async isOk => {
+        if (isOk) {
+          await addDepartment({ ...this.depFrom, pid: this.currentNodeId })
+          this.$emit('updateDepartment')
+          this.$message.success('新增成功')
+          this.close()
+        }
+      })
+    },
+    async getDepartmentDetail(id) {
+      id = this.currentNodeId
+      const result = await getDepartmentDetail(id)
+      this.depFrom = result
     }
   }
 }
