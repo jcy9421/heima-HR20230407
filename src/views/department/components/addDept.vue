@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="showDialog" title="新增部门" @close="close">
+  <el-dialog :visible="showDialog" :title="showTitle" @close="close">
     <el-form ref="depFrom" :model="depFrom" :rules="depRules">
       <el-form-item prop="name" label="部门名称">
         <el-input v-model="depFrom.name" style="width: 90%" />
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { addDepartment, getDepartmentDetail, getDepartmentList, getSimpleList } from '@/api/department'
+import { addDepartment, getDepartmentDetail, getDepartmentList, getSimpleList, updateDepartment } from '@/api/department'
 
 export default {
   name: 'AddDept',
@@ -55,7 +55,7 @@ export default {
       depFrom: {
         name: '',
         code: '',
-        managerId: [],
+        managerId: '',
         introduce: '',
         pid: ''
       },
@@ -67,7 +67,10 @@ export default {
           trigger: 'blur'
         }, {
           trigger: 'blur', validator: async(rule, value, callback) => {
-            const result = await getDepartmentList(value)
+            let result = await getDepartmentList(value)
+            if (this.depFrom.id) {
+              result = result.filter(item => item.id !== this.depFrom.id)
+            }
             if (result.some(item => item.name === value)) {
               callback(new Error('部门名称已存在'))
             } else {
@@ -82,7 +85,10 @@ export default {
           trigger: 'blur'
         }, {
           trigger: 'blur', validator: async(rule, value, callback) => {
-            const result = await getDepartmentList(value)
+            let result = await getDepartmentList(value)
+            if (this.depFrom.id) {
+              result = result.filter(item => item.id !== this.depFrom.id)
+            }
             if (result.some(item => item.code === value)) {
               callback(new Error('部门编码已存在'))
             } else {
@@ -101,24 +107,43 @@ export default {
       }
     }
   },
+  computed: {
+    showTitle() {
+      return this.depFrom.id ? '编辑部门' : '新增部门'
+    }
+  },
   created() {
     this.getSimpleList()
   },
   methods: {
     close() {
+      this.depFrom = {
+        name: '',
+        code: '',
+        managerId: '',
+        introduce: '',
+        pid: ''
+      }
       this.$refs.depFrom.resetFields()
       this.$emit('update:showDialog', false)
     },
     async getSimpleList() {
-      const result = await getSimpleList()
-      this.managerList = result
+      this.managerList = await getSimpleList()
     },
     btnOk() {
       this.$refs.depFrom.validate(async isOk => {
         if (isOk) {
-          await addDepartment({ ...this.depFrom, pid: this.currentNodeId })
+          let msg = '新增'
+          if (this.depFrom.id) {
+            msg = '编辑'
+            // 编辑
+            await updateDepartment(this.depFrom)
+          } else {
+            // 新增
+            await addDepartment({ ...this.depFrom, pid: this.currentNodeId })
+          }
           this.$emit('updateDepartment')
-          this.$message.success('新增成功')
+          this.$message.success(`${msg}部门成功`)
           this.close()
         }
       })
