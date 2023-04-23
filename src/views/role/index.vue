@@ -47,7 +47,11 @@
         />
       </el-row>
     </div>
-    <add-role :show-dialog.sync="showDialog" />
+    <add-role
+      ref="addRole"
+      :show-dialog.sync="showDialog"
+      @updateRoleList="getRoleList"
+    />
   </div>
 </template>
 <script>
