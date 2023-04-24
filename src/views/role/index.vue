@@ -14,13 +14,22 @@
         <el-table-column prop="name" align="center" width="300px" label="角色">
           <template v-slot="{ row }">
             <!--            条件判断-->
-            <el-input v-if="row.isEdit" size="mini" />
+            <el-input
+              v-if="row.isEdit"
+              v-model="row.editRow.name"
+              size="mini"
+            />
             <span v-else>{{ row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="state" align="center" width="300px" label="启用">
           <template v-slot="{ row }">
-            <el-switch v-if="row.isEdit" />
+            <el-switch
+              v-if="row.isEdit"
+              v-model="row.editRow.state"
+              :active-value="1"
+              :inactive-value="0"
+            />
             <el-tag
               v-else
               :type="getTagColor(row.state)"
@@ -33,7 +42,12 @@
         <el-table-column prop="description" align="center" label="描述">
           <template v-slot="{ row }">
             <!--            条件判断-->
-            <el-input v-if="row.isEdit" type="textarea" size="mini" />
+            <el-input
+              v-if="row.isEdit"
+              v-model="row.editRow.description"
+              type="textarea"
+              size="mini"
+            />
             <span v-else>{{ row.description }}</span>
           </template>
         </el-table-column>
@@ -104,6 +118,12 @@ export default {
         // 添加一个属性，初始值为false
         // item.isEdit = false   动态添加不具备响应式特性
         this.$set(item, 'isEdit', false) // this.$set(目标对象,属性名,初始值)
+        // 缓存数据
+        this.$set(item, 'editRow', {
+          name: item.name,
+          state: item.state,
+          description: item.description
+        })
       })
     },
     getTagColor(state) {
@@ -119,6 +139,9 @@ export default {
     },
     btnEditRow(row) {
       row.isEdit = true
+      row.editRow.name = row.name
+      row.editRow.state = row.state
+      row.editRow.description = row.description
     }
   }
 }
