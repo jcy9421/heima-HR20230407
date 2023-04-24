@@ -6,3 +6,11 @@ export function getRoleList(params) {
     params
   })
 }
+
+export function addRole(data) {
+  return request({
+    url: '/sys/role',
+    method: 'post',
+    data
+  })
+}

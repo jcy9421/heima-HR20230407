@@ -14,7 +14,7 @@
           v-model="roleForm.state"
           :active-value="1"
           size="mini"
-          :inactiv-value="0"
+          :inactive-value="0"
         />
       </el-form-item>
       <el-form-item prop="description" label="角色描述">
@@ -28,7 +28,7 @@
     </el-form>
     <el-divider />
     <el-row type="flex" justify="center">
-      <el-col span="12">
+      <el-col :span="12">
         <el-button type="primary" @click="btnOk">确定</el-button>
         <el-button @click="close">取消</el-button>
       </el-col>
@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import { addRole } from '@/api/role'
+
 export default {
   name: 'AddRole',
   props: {
@@ -49,7 +51,7 @@ export default {
     return {
       roleForm: {
         name: '',
-        state: '',
+        state: 0,
         description: ''
       },
       roleRules: {
@@ -66,7 +68,14 @@ export default {
       this.$emit('update:showDialog', false)
     },
     btnOk() {
-      this.$refs.roleForm.validate()
+      this.$refs.roleForm.validate(async(isOk) => {
+        if (isOk) {
+          await addRole(this.roleForm)
+          this.$message.success('新增角色成功')
+          this.$emit('updateRoleList')
+          this.close()
+        }
+      })
     }
   }
 }
