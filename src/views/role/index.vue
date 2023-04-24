@@ -54,8 +54,17 @@
         <el-table-column align="center" label="操作">
           <template v-slot="{ row }">
             <template v-if="row.isEdit">
-              <el-button size="mini" type="primary">确定</el-button>
-              <el-button size="mini">取消</el-button>
+              <el-button
+                size="mini"
+                type="primary"
+                @click="btnEditSub(row)"
+              >确定
+              </el-button>
+              <el-button
+                size="mini"
+                @click="row.isEdit = false"
+              >取消
+              </el-button>
             </template>
             <template v-else>
               <el-button size="mini" type="text">分配权限</el-button>
@@ -65,7 +74,18 @@
                 @click="btnEditRow(row)"
               >编辑
               </el-button>
-              <el-button size="mini" type="text">删除</el-button>
+              <el-popconfirm
+                title="确定删除吗？"
+                @onConfirm="confirmDel(row.id)"
+              >
+                <el-button
+                  slot="reference"
+                  size="mini"
+                  type="text"
+                  style="margin-left: 8px"
+                >删除
+                </el-button>
+              </el-popconfirm>
             </template>
           </template>
         </el-table-column>
@@ -89,7 +109,7 @@
   </div>
 </template>
 <script>
-import { getRoleList } from '@/api/role'
+import { delRole, getRoleList, updateRole } from '@/api/role'
 import AddRole from '@/views/role/components/addRole.vue'
 
 export default {
@@ -101,7 +121,7 @@ export default {
       roleList: [],
       pageParams: {
         page: 1,
-        pagesize: 5,
+        pagesize: 10,
         total: 0
       }
     }
@@ -142,6 +162,28 @@ export default {
       row.editRow.name = row.name
       row.editRow.state = row.state
       row.editRow.description = row.description
+    },
+    async btnEditSub(row) {
+      if (row.editRow.name && row.editRow.description) {
+        await updateRole({ ...row.editRow, id: row.id })
+        this.$message.success('更新角色成功')
+        // eslint-disable-next-line require-atomic-updates
+        // row.name = row.editRow.name
+        // Object.assign(目标:target,来源:souroe)
+        Object.assign(row, {
+          ...row.editRow,
+          isEdit: false
+        })
+      } else {
+        this.$message.error('角色名称和描述不能为空')
+      }
+    },
+    async confirmDel(id) {
+      await delRole(id)
+      this.$message.success('删除角色成功')
+      // 如果是最后一个
+      if (this.roleList.length === 1) this.pageParams.page--
+      this.getRoleList()
     }
   }
 }
