@@ -3,11 +3,13 @@
     <div class="app-container">
       <div class="left">
         <el-input
+          v-model="queryParams.keyword"
           style="margin-bottom: 10px"
           type="text"
           prefix-icon="el-icon-search"
           size="small"
           placeholder="输入员工姓名全员搜索"
+          @input="changeValue"
         />
         <!-- 树形组件 -->
         <el-tree
@@ -79,6 +81,7 @@
 import { getDepartmentList } from '@/api/department'
 import { transListToTreeData } from '@/utils'
 import { getEmployeeList } from '@/api/employee'
+import { setTimeout } from 'core-js/internals/schedulers-fix'
 
 export default {
   name: 'Employee',
@@ -105,7 +108,8 @@ export default {
       queryParams: {
         departmentId: null,
         page: 1,
-        pagesize: 10
+        pagesize: 10,
+        keyword: ''
       },
       total: 0
     }
@@ -136,6 +140,13 @@ export default {
     changePage(newPage) {
       this.queryParams.page = newPage
       this.getEmployeeList()
+    },
+    changeValue() {
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.queryParams.page = 1
+        this.getEmployeeList()
+      }, 300)
     }
   }
 }
