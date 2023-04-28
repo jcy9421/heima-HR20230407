@@ -58,10 +58,21 @@
           <el-table-column label="部门" prop="departmentName" />
           <el-table-column label="入职时间" prop="timeOfEntry" sortable />
           <el-table-column label="操作" width="280px">
-            <template>
+            <template v-slot="{ row }">
               <el-button size="mini" type="text">查看</el-button>
               <el-button size="mini" type="text">角色</el-button>
-              <el-button size="mini" type="text">删除</el-button>
+              <el-popconfirm
+                title="确认删除该员工吗？"
+                @onConfirm="confirmDel(row.id)"
+              >
+                <el-button
+                  slot="reference"
+                  size="mini"
+                  type="text"
+                  style="margin-left: 8px"
+                >删除
+                </el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -88,7 +99,7 @@
 <script>
 import { getDepartmentList } from '@/api/department'
 import { transListToTreeData } from '@/utils'
-import { exportEmployee, getEmployeeList } from '@/api/employee'
+import { delEmployee, exportEmployee, getEmployeeList } from '@/api/employee'
 import { setTimeout } from 'core-js/internals/schedulers-fix'
 import FileSaver from 'file-saver'
 import ImportExcel from '@/views/employee/components/import-excel.vue'
@@ -163,6 +174,15 @@ export default {
     async exportEmployee() {
       const result = await exportEmployee()
       FileSaver.saveAs(result, '员工信息表.xlsx')
+    },
+    async confirmDel(id) {
+      await delEmployee(id)
+      // 如果是最后一个
+      if (this.employeeList.length === 1 && this.queryParams.page > 1) {
+        this.queryParams.page--
+      }
+      this.getEmployeeList()
+      this.$message.success('删除员工成功')
     }
   }
 }
