@@ -22,3 +22,12 @@ export function getExportTemplate() {
     responseType: 'blob'
   })
 }
+
+// 导入excel
+export function uploadExcel(data) {
+  return request({
+    url: '/sys/user/import',
+    method: 'post',
+    data // from-data类型
+  })
+}

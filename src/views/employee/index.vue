@@ -29,7 +29,8 @@
           <el-button
             size="mini"
             @click="showExcelDialog = true"
-          >excel导入</el-button>
+          >excel导入
+          </el-button>
           <el-button size="mini" @click="exportEmployee">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
@@ -77,7 +78,10 @@
         <!-- 分页 -->
       </div>
     </div>
-    <import-excel :show-excel-dialog.sync="showExcelDialog" />
+    <import-excel
+      :show-excel-dialog.sync="showExcelDialog"
+      @uploadSuccess="getEmployeeList"
+    />
   </div>
 </template>
 
