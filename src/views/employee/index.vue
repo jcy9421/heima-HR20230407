@@ -3,11 +3,13 @@
     <div class="app-container">
       <div class="left">
         <el-input
+          v-model="queryParams.keyword"
           style="margin-bottom: 10px"
           type="text"
           prefix-icon="el-icon-search"
           size="small"
           placeholder="输入员工姓名全员搜索"
+          @input="changeValue"
         />
         <!-- 树形组件 -->
         <el-tree
@@ -25,7 +27,7 @@
         <el-row class="opeate-tools" type="flex" justify="end">
           <el-button size="mini" type="primary">添加员工</el-button>
           <el-button size="mini">excel导入</el-button>
-          <el-button size="mini">excel导出</el-button>
+          <el-button size="mini" @click="exportEmployee">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
         <el-table :data="employeeList">
@@ -78,7 +80,9 @@
 <script>
 import { getDepartmentList } from '@/api/department'
 import { transListToTreeData } from '@/utils'
-import { getEmployeeList } from '@/api/employee'
+import { exportEmployee, getEmployeeList } from '@/api/employee'
+import { setTimeout } from 'core-js/internals/schedulers-fix'
+import FileSaver from 'file-saver'
 
 export default {
   name: 'Employee',
@@ -105,7 +109,8 @@ export default {
       queryParams: {
         departmentId: null,
         page: 1,
-        pagesize: 10
+        pagesize: 10,
+        keyword: ''
       },
       total: 0
     }
@@ -136,6 +141,17 @@ export default {
     changePage(newPage) {
       this.queryParams.page = newPage
       this.getEmployeeList()
+    },
+    changeValue() {
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.queryParams.page = 1
+        this.getEmployeeList()
+      }, 300)
+    },
+    async exportEmployee() {
+      const result = await exportEmployee()
+      FileSaver.saveAs(result, '员工信息表.xlsx')
     }
   }
 }
