@@ -27,7 +27,7 @@
         <el-row class="opeate-tools" type="flex" justify="end">
           <el-button size="mini" type="primary">添加员工</el-button>
           <el-button size="mini">excel导入</el-button>
-          <el-button size="mini">excel导出</el-button>
+          <el-button size="mini" @click="exportEmployee">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
         <el-table :data="employeeList">
@@ -80,8 +80,9 @@
 <script>
 import { getDepartmentList } from '@/api/department'
 import { transListToTreeData } from '@/utils'
-import { getEmployeeList } from '@/api/employee'
+import { exportEmployee, getEmployeeList } from '@/api/employee'
 import { setTimeout } from 'core-js/internals/schedulers-fix'
+import FileSaver from 'file-saver'
 
 export default {
   name: 'Employee',
@@ -147,6 +148,10 @@ export default {
         this.queryParams.page = 1
         this.getEmployeeList()
       }, 300)
+    },
+    async exportEmployee() {
+      const result = await exportEmployee()
+      FileSaver.saveAs(result, '员工信息表.xlsx')
     }
   }
 }

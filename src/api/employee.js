@@ -6,3 +6,11 @@ export function getEmployeeList(params) {
     params
   })
 }
+
+// 导出excel
+export function exportEmployee() {
+  return request({
+    url: '/sys/user/export',
+    responseType: 'blob'
+  })
+}
