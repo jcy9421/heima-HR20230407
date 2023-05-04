@@ -1,5 +1,5 @@
 <template>
-  <el-cascader size="mini" :options="treeData" :props="props" separator="-" :value="value" />
+  <el-cascader size="mini" :options="treeData" :props="props" separator="-" :value="value" @change="changeValue" />
 </template>
 
 <script>
@@ -31,6 +31,13 @@ export default {
       const result = await getDepartmentList()
       const data = transListToTreeData(result, 0)
       this.treeData = data
+    },
+    changeValue(list) {
+      if (list.length > 0) {
+        this.$emit('input', list[list.length - 1])
+      } else {
+        this.$emit('input', null)
+      }
     }
   }
 }

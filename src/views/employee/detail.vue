@@ -15,7 +15,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="工号" prop="workNumber">
-                <el-input v-model="userInfo.workNumber" size="mini" class="inputW" />
+                <el-input v-model="userInfo.workNumber" size="mini" class="inputW" disabled />
               </el-form-item>
             </el-col>
           </el-row>
@@ -86,6 +86,7 @@
 
 <script>
 import SelectTree from '@/views/employee/components/select-tree.vue'
+import { addEmployee } from '@/api/employee'
 
 export default {
   name: 'Detail',
@@ -130,7 +131,13 @@ export default {
   },
   methods: {
     saveData() {
-      this.$refs.userForm.validate()
+      this.$refs.userForm.validate(async isOk => {
+        if (isOk) {
+          await addEmployee(this.userInfo)
+          this.$message.success('新增员工成功')
+          this.$router.push('/employee')
+        }
+      })
     }
   }
 }
