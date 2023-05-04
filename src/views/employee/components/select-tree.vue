@@ -1,5 +1,5 @@
 <template>
-  <el-cascader size="mini" :options="treeData" :props="props" separator="-" />
+  <el-cascader size="mini" :options="treeData" :props="props" separator="-" :value="value" />
 </template>
 
 <script>
@@ -8,6 +8,12 @@ import { transListToTreeData } from '@/utils'
 
 export default {
   name: 'SelectTree',
+  props: {
+    value: {
+      type: Number,
+      default: null
+    }
+  },
   data() {
     return {
       treeData: [],
