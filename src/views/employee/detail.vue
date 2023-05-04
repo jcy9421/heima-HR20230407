@@ -23,7 +23,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="手机" prop="mobile">
-                <el-input v-model="userInfo.mobile" size="mini" class="inputW" />
+                <el-input v-model="userInfo.mobile" size="mini" class="inputW" :disabled="!!$route.params.id" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -68,7 +68,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="员工头像">
-                <!-- 放置上传图片 -->
+                <image-upload v-model="userInfo.staffPhoto" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -86,11 +86,12 @@
 
 <script>
 import SelectTree from '@/views/employee/components/select-tree.vue'
-import { addEmployee, getEmployeeDetail } from '@/api/employee'
+import { addEmployee, editEmployee, getEmployeeDetail } from '@/api/employee'
+import ImageUpload from '@/views/employee/components/image-upload.vue'
 
 export default {
   name: 'Detail',
-  components: { SelectTree },
+  components: { ImageUpload, SelectTree },
   data() {
     return {
       userInfo: {
@@ -100,7 +101,8 @@ export default {
         formOfEmployment: null, // 聘用形式
         departmentId: null, // 部门id
         timeOfEntry: '', // 入职时间
-        correctionTime: '' // 转正时间
+        correctionTime: '', // 转正时间
+        staffPhoto: ''
       },
       rules: {
         username: [{ required: true, message: '请输入姓名', trigger: 'blur' }, {
@@ -141,8 +143,15 @@ export default {
     saveData() {
       this.$refs.userForm.validate(async isOk => {
         if (isOk) {
-          await addEmployee(this.userInfo)
-          this.$message.success('新增员工成功')
+          if (this.$route.params.id) {
+            // 编辑
+            await editEmployee(this.userInfo)
+            this.$message.success('更新员工信息成功')
+          } else {
+            // 新增
+            await addEmployee(this.userInfo)
+            this.$message.success('新增员工成功')
+          }
           this.$router.push('/employee')
         }
       })

@@ -55,3 +55,12 @@ export function getEmployeeDetail(id) {
     url: `/sys/user/${id}`
   })
 }
+
+// 编辑
+export function editEmployee(data) {
+  return request({
+    url: `/sys/user/${data.id}`,
+    method: 'put',
+    data
+  })
+}
