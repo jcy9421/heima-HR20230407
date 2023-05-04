@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="app-container">
-      权限管理
+      <el-button type="primary">添加权限</el-button>
     </div>
   </div>
 </template>
